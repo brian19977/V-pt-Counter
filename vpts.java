@@ -9,8 +9,8 @@ public class vpts {
 
 		// handle each row
 		while(s.hasNextLine()) {
-			// split each row by commas
-			String[] cols = s.nextLine().split(",");
+			// split each row by tabs
+			String[] cols = s.nextLine().split("\t");
 			
 			// split third col by spaces
 			// gets rid of safety ratings after grades
@@ -20,14 +20,17 @@ public class vpts {
 			if(v.charAt(0) == '\"')
 				v = v.substring(1,v.length());
 
-			// skip "V-easy"
-			if(v.charAt(1) == '-')
+			// skip "V-easy" and non-V-grades
+			if(v.charAt(1) == '-' || v.charAt(0) != 'V')
 				continue;
 
 			// grade resembles "VX"
-			if(v.length() == 2)
-				pts += Double.parseDouble(Character.toString(v.charAt(1)));
-			
+			if(v.length() == 2) {
+				// V0 gets quarter-point
+				double val = Double.parseDouble(Character.toString(v.charAt(1)));
+				pts += val == 0 ? 0.25 : val;
+			}
+
 			// grade resembles "VX+"
 			else if (v.length() == 3) {
 				if(v.charAt(2) == '+')
