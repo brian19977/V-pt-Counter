@@ -3,7 +3,7 @@ import java.io.*;
 import java.lang.*;
 public class vpts {
 	public static void main(String[] args) throws Exception {
-		Scanner s = new Scanner(new File("ticks.csv"));
+		Scanner s = new Scanner(new File(args[0]));
 		double pts = 0;
 		s.nextLine(); // skip first line; headers
 
@@ -20,6 +20,10 @@ public class vpts {
 			if(v.charAt(0) == '\"')
 				v = v.substring(1,v.length());
 
+			// skip "V-easy"
+			if(v.charAt(1) == '-')
+				continue;
+
 			// grade resembles "VX"
 			if(v.length() == 2)
 				pts += Double.parseDouble(Character.toString(v.charAt(1)));
@@ -28,9 +32,11 @@ public class vpts {
 			else if (v.length() == 3) {
 				if(v.charAt(2) == '+')
 					pts += Double.parseDouble(Character.toString(v.charAt(1))) + 0.5;
-				else
-					pts += Double.parseDouble(Character.toString(v.charAt(1))) - 0.5;
-
+				else {
+					// so that V0- does not subtract points
+					double val = Double.parseDouble(Character.toString(v.charAt(1))) - 0.5;
+					pts += val < 0 ? 0 : val;
+				}
 			}
 
 			// grade resembles "VX-Y"
